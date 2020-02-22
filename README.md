@@ -5,7 +5,7 @@ Loop for ecological data analysis
 
 This package includes functions I developed that based on my PhD projects, which mainly concern stream ecology with a focus on biofilm. It covers the following aspects:
 
-* Loop for **Input/Output**: read and write multiple files
+* Loop for **Input/Output**: read and write multiple files.
 
 * Loop for **models**: make repetitive work easy e.g., comunity- and species- based variation partitioning; group species abundance matrix into abundant and rare species subcommunities etc.
 
