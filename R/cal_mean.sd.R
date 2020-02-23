@@ -1,4 +1,4 @@
-#' Title Calculated mean±sd
+#' Calculated mean±sd
 #'
 #' @param df a numeric vector
 #' @param digits how many digits

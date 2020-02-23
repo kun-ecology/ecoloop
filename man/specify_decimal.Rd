@@ -2,7 +2,7 @@
 % Please edit documentation in R/specify_decimal.R
 \name{specify_decimal}
 \alias{specify_decimal}
-\title{Title Specify decimal number for numeric data}
+\title{Specify decimal number for numeric data}
 \usage{
 specify_decimal(x, k = NULL)
 }
@@ -15,5 +15,5 @@ specify_decimal(x, k = NULL)
 a character
 }
 \description{
-Title Specify decimal number for numeric data
+Specify decimal number for numeric data
 }

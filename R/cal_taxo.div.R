@@ -1,8 +1,4 @@
-#
-#
-# spe.df may contain non-numeric data, but only numeric ones will be used for calculation
-# return diversity and also the non-numeric data in orginal data
-#' Title Calculte taxonomic diversity
+#' Calculte taxonomic diversity
 #'
 #' @param spe.df a dataframe, row as site while column as species name, nonumeric data will be used in final results
 #'

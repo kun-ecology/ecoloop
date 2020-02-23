@@ -1,4 +1,4 @@
-#' Title Construct formula with multipe response and explanatory variabels
+#' Construct formula with multipe response and explanatory variabels
 #'
 #' @param Resp.Var response variables, should be character vectors
 #' @param Exp.Vars explanatory variables, should be character vectors
