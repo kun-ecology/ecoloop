@@ -6,6 +6,7 @@ Loop for ecological data analysis
 ```R  
 # install package devtools if necessary
 if(!require(devtools)) install.packages("devtools")
+
 devtools::install_github("https://github.com/kun-ecology/ecoloop")
 ```
 
