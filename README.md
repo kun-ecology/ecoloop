@@ -1,7 +1,15 @@
 # ecoloop
 Loop for ecological data analysis
 
-# Description
+# Install the package
+
+```R  
+# install package devtools if necessary
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("https://github.com/kun-ecology/ecoloop")
+```
+
+# Tutorial
 
 This package includes functions I developed that based on my PhD projects, which mainly concern stream ecology with a focus on biofilm. It covers the following aspects:
 
