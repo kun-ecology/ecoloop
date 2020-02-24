@@ -19,7 +19,7 @@ get_vpa_df <- function(vpa.res){
   } else if (any((map_chr(sp.modes$mod.sel,class))=="try-error")) {
     nm <- names(sp.modes$mod.sel)
     sp.modes$mod.sel[(map_chr(sp.modes$mod.sel,class))=="try-error"] <- list(none.sel)
-    names(sp.modes$mod.sel)[(map_chr(sp.modes$mod.sel,class))=="try-error"] <-  nm[(map_chr(sp.modes$mod.sel,class))=="try-error"]
+    names(sp.modes$mod.sel)[map_chr(sp.modes$mod.sel,class)=="try-error"] <-  nm[map_chr(sp.modes$mod.sel,class)=="try-error"]
 
 
   } else {
