@@ -16,7 +16,7 @@ get_vpa_df <- function(vpa.res){
   if(all(is.na(sp.modes$mod.sel)) ){
     sp.modes$mod.sel <- list(none=data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA))
   } else if (any((map_chr(sp.modes$mod.sel,class))=="try-error")) {
-    sp.modes$mod.sel[[(map_lgl(sp.modes$mod.sel,class))=="try-error"]] <-
+    sp.modes$mod.sel[[(map_chr(sp.modes$mod.sel,class))=="try-error"]] <-
       data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
 
   } else {
@@ -33,12 +33,15 @@ get_vpa_df <- function(vpa.res){
   # mod.sel.f, a list with selected environmental variables
   # vpa, results of VPA mod
   extract_vpa_df <- function(mod.res){
-
+      mod.sel <- do.call(rbind.data.frame,mod.res$mod.sel) %>%
+         mutate(env.type= stringr::word(row.names(.),1,sep="\\.")) %>%
+          dplyr::select(8,1:7)
+    
     # extract mod selection and explained variation from VPA
     if (all(is.na(mod.res$vpa))){ # for which VPA not succeed
       # means no variable were selected
       # or model is not significant
-      mod.sel <- data.frame(env.type="none",variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
+      
 
       env.frac <- map_dbl(mod.res$mode,function(mod){
         cat("Extract RsquareAdj (May take minutes if species number is high) \n")
@@ -51,10 +54,7 @@ get_vpa_df <- function(vpa.res){
 
 
     } else { # for which VPA succeed
-      mod.sel <- do.call(rbind.data.frame,mod.res$mod.sel) %>%
-        #mutate(env.type= rep(names(mod.res$mod.sel),map_dbl(mod.res$mod.sel,nrow))) %>%
-        mutate(env.type= stringr::word(row.names(.),1,sep="\\.")) %>%
-        dplyr::select(8,1:7)
+      
       env.frac <- mod.res$vpa$part$indfract$Adj.R.square
       if (length(env.frac)==4){ # for varpart(sp, env1, env2)
         envfrac.df <- data.frame(env.type=c(names(mod.res$mod.sel),"Residuals"),
