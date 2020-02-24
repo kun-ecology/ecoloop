@@ -65,7 +65,7 @@ get_vpa_df <- function(vpa.res){
                                  mod.p= c((map_dbl(mod.res$mod.aov,function(x)x$`Pr(>F)`[1]))[names(mod.res$mod.sel)],NA))
       } else { # for varpart (sp, env1, env2, env3) and varpart (sp, env1, env2, env3,env4)
         envfrac.df <- data.frame(env.type=c(names(mod.res$mod.sel),"Residuals"),
-                                 adjR2=env.frac[1:(length(mod.res$mod.sel)+1)],
+                                 adjR2=env.frac[c(1:(length(mod.res$mod.sel)),length(env.frac)],
                                  mod.p= c((map_dbl(mod.res$mod.aov,function(x)x$`Pr(>F)`[1]))[names(mod.res$mod.sel)],NA))
       }
     }
