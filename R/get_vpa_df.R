@@ -13,12 +13,13 @@ get_vpa_df <- function(vpa.res){
   sp.modes <- vpa.res$mod.res
 
   # if mod selection is try-error
+  none.sel <- data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
   if(all(is.na(sp.modes$mod.sel)) ){
-    sp.modes$mod.sel <- list(none=data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA))
+    sp.modes$mod.sel <- list(none= none.sel)
   } else if (any((map_chr(sp.modes$mod.sel,class))=="try-error")) {
- 
-    sp.modes$mod.sel[(map_chr(sp.modes$mod.sel,class))=="try-error"] <- list(data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA))
-    names(sp.modes$mod.sel[(map_chr(sp.modes$mod.sel,class))=="try-error"]) <-  names(sp.modes$mod.sel)[(map_chr(sp.modes$mod.sel,class))=="try-error"]
+    nm <- names(sp.modes$mod.sel)
+    sp.modes$mod.sel[(map_chr(sp.modes$mod.sel,class))=="try-error"] <- list(none.sel)
+    names(sp.modes$mod.sel)[(map_chr(sp.modes$mod.sel,class))=="try-error"] <-  nm[(map_chr(sp.modes$mod.sel,class))=="try-error"]
     
 
   } else {
