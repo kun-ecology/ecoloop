@@ -41,6 +41,7 @@ get_vpa_df <- function(vpa.res){
       mod.sel <- data.frame(env.type="none",variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
 
       env.frac <- map_dbl(mod.res$mode,function(mod){
+        cat("Extract RsquareAdj (May take minutes if species number is high \n")
         mod.adjR <- RsquareAdj(mod)
         mod.adjR <- mod.adjR[[2]]
         return(mod.adjR)  })
