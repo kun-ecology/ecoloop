@@ -16,7 +16,7 @@ get_vpa_df <- function(vpa.res){
   if(all(is.na(sp.modes$mod.sel)) ){
     sp.modes$mod.sel <- list(none=data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA))
   } else if (any((map_chr(sp.modes$mod.sel,class))=="try-error")) {
-    sp.modes$mod.sel[[(map_chr(sp.modes$mod.sel,class))=="try-error"]] <-
+    sp.modes$mod.sel[(map_chr(sp.modes$mod.sel,class))=="try-error"] <-
       data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
 
   } else {
