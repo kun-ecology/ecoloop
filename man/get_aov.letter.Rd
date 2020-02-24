@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_aov.letter.R
 \name{get_aov.letter}
 \alias{get_aov.letter}
-\title{Title Get multiple comparison letters from anova (HSD.test,package agricolae )}
+\title{Get multiple comparison letters from anova (HSD.test,package agricolae)}
 \usage{
 get_aov.letter(resp.var, exp.var, data, p.adj = NULL)
 }
@@ -19,5 +19,5 @@ get_aov.letter(resp.var, exp.var, data, p.adj = NULL)
 
 }
 \description{
-Title Get multiple comparison letters from anova (HSD.test,package agricolae )
+Get multiple comparison letters from anova (HSD.test,package agricolae)
 }

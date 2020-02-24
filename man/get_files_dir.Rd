@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_files_dir.R
 \name{get_files_dir}
 \alias{get_files_dir}
-\title{Title A function that return list of file naes with specified patterns}
+\title{A function that return list of file naes with specified patterns}
 \usage{
 get_files_dir(directory = NULL, pattern = NULL)
 }
@@ -15,5 +15,5 @@ get_files_dir(directory = NULL, pattern = NULL)
 a list, file path as the element while file name as the element name
 }
 \description{
-Title A function that return list of file naes with specified patterns
+A function that return list of file naes with specified patterns
 }

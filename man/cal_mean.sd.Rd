@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal_mean.sd.R
 \name{cal_mean.sd}
 \alias{cal_mean.sd}
-\title{Title Calculated mean±sd}
+\title{Calculated mean±sd}
 \usage{
 cal_mean.sd(df, digits = NULL, nsmall = NULL)
 }
@@ -17,7 +17,7 @@ cal_mean.sd(df, digits = NULL, nsmall = NULL)
 a character
 }
 \description{
-Title Calculated mean±sd
+Calculated mean±sd
 }
 \examples{
 usuallt it is used with dplyr::summarise and dplyr::mutate funciton

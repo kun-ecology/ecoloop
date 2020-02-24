@@ -2,7 +2,7 @@
 % Please edit documentation in R/group_otu.R
 \name{group_otu}
 \alias{group_otu}
-\title{Title Group taxa (mainly for OTU) into dominant and rare}
+\title{Group taxa (mainly for OTU) into dominant and rare}
 \usage{
 group_otu(df, lower = NULL, upper = NULL, simplify = T)
 }
@@ -20,5 +20,5 @@ for how the grouping things works}
 
 }
 \description{
-Title Group taxa (mainly for OTU) into dominant and rare
+Group taxa (mainly for OTU) into dominant and rare
 }

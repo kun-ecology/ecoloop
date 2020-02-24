@@ -2,7 +2,7 @@
 % Please edit documentation in R/construct_fourmula.R
 \name{construct_fourmula}
 \alias{construct_fourmula}
-\title{Title Construct formula with multipe response and explanatory variabels}
+\title{Construct formula with multipe response and explanatory variabels}
 \usage{
 construct_fourmula(Resp.Var, Exp.Vars, type = NULL, collapse = NULL)
 }
@@ -20,5 +20,5 @@ for each Resp.Vars and each Exp.Vars(set an arbitary value to type)}
 
 }
 \description{
-Title Construct formula with multipe response and explanatory variabels
+Construct formula with multipe response and explanatory variabels
 }

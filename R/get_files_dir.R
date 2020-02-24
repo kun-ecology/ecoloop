@@ -1,4 +1,4 @@
-#' Title A function that return list of file naes with specified patterns
+#' A function that return list of file naes with specified patterns
 #'
 #' @param directory a string, absolute file path
 #' @param pattern specified patterns e.g., "txt", "xlsx", and etc.

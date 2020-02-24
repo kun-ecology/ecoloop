@@ -1,4 +1,4 @@
-#' Title Group taxa (mainly for OTU) into dominant and rare
+#' Group taxa (mainly for OTU) into dominant and rare
 #'
 #' @param df species abundance data, see https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-019-0749-8#Sec28
 #' for how the grouping things works

@@ -1,4 +1,4 @@
-#' Title  community- and species- based variation partitioning
+#' Community- and species- based variation partitioning
 #'
 #' @param sp species abundance data with sites as row while species as columns, raw data is needed if you want to run species-based VPA
 #' @param env_ls a list containing at least two elements, while at most four elements;

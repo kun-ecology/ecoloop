@@ -2,7 +2,7 @@
 % Please edit documentation in R/dist2df.R
 \name{dist2df}
 \alias{dist2df}
-\title{Title Convert dist and matrix type data into dataframe}
+\title{Convert dist and matrix type data into dataframe}
 \usage{
 dist2df(inDist)
 }
@@ -13,5 +13,5 @@ dist2df(inDist)
 a dataframe
 }
 \description{
-Title Convert dist and matrix type data into dataframe
+Convert dist and matrix type data into dataframe
 }

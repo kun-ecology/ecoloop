@@ -1,4 +1,4 @@
-#' Title Customed log1p for data with negative value less than -1
+#' Customed log1p for data with negative value less than -1
 #'
 #' @param x a numeric vector
 #' @param base exp(1) or 10, or 2 based log (x+a)

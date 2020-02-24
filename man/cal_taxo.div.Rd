@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal_taxo.div.R
 \name{cal_taxo.div}
 \alias{cal_taxo.div}
-\title{Title Calculte taxonomic diversity}
+\title{Calculte taxonomic diversity}
 \usage{
 cal_taxo.div(spe.df)
 }
@@ -13,5 +13,5 @@ cal_taxo.div(spe.df)
 a dataframe, Species number, Shannon-wiener diversity, Simpson diversity and Evenness are calculated
 }
 \description{
-Title Calculte taxonomic diversity
+Calculte taxonomic diversity
 }

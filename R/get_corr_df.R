@@ -1,4 +1,4 @@
-#' Title A function return correlation and p value in dataframe formate
+#' A function return correlation and p value in dataframe formate
 #'
 #' @param df.x a dataframe, only numeric data will be used
 #' @param df.y a dataframe, not necessary

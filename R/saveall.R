@@ -1,4 +1,4 @@
-#' Title Save a list with non-dataframe data into csv/txt file
+#' Save a list with non-dataframe data into csv/txt file
 #'
 #' @param list_data a list
 #' @param data.name  file name for saving the list e.g., "all.csv"

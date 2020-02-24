@@ -1,4 +1,4 @@
-#' get_ind.val: compute indicator species analsyis
+#' Conduct indicator species analsyis
 #'
 #' @param spe a data frame wirh row as observations (sites) while column as species
 #' @param grp  a vector indicating the group of, it should be a factor

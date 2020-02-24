@@ -1,4 +1,4 @@
-#' Title Convert dist and matrix type data into dataframe
+#' Convert dist and matrix type data into dataframe
 #'
 #' @param inDist a dist or matrix type data
 #'

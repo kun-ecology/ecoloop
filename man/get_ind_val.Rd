@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_ind_val.R
 \name{get_ind_val}
 \alias{get_ind_val}
-\title{get_ind.val: compute indicator species analsyis}
+\title{Conduct indicator species analsyis}
 \usage{
 get_ind_val(spe, grp, numitr = NULL, p.cut = NULL, p.adj = NULL, ...)
 }
@@ -24,5 +24,5 @@ a dataframe with 5 columns i.e., species names (spe), group (group),
 indicator values (indval), pvalue, freq
 }
 \description{
-get_ind.val: compute indicator species analsyis
+Conduct indicator species analsyis
 }

@@ -1,4 +1,4 @@
-#' Title Get multiple comparison letters from anova (HSD.test,package agricolae )
+#' Get multiple comparison letters from anova (HSD.test,package agricolae)
 #'
 #' @param resp.var a character regarding the numeric data
 #' @param exp.var a character regarding the group factor

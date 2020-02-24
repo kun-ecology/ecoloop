@@ -1,4 +1,4 @@
-#' Title Get tidy results from linear, nls, lmer, lme mode
+#' Get tidy results from linear, nls, lmer, lme mode
 #'
 #' @param lm.mod a model returned by function lm, nls, lmer, lme
 #' @param CI whether return confidence interval for the estimates, only works for lm model

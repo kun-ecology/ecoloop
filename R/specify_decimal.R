@@ -1,4 +1,4 @@
-#' Title Specify decimal number for numeric data
+#' Specify decimal number for numeric data
 #'
 #' @param x a numeric vector
 #' @param k numbers of digits

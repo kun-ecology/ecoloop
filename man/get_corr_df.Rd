@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_corr_df.R
 \name{get_corr_df}
 \alias{get_corr_df}
-\title{Title A function return correlation and p value in dataframe formate}
+\title{A function return correlation and p value in dataframe formate}
 \usage{
 get_corr_df(df.x, df.y = NULL, type = NULL)
 }
@@ -17,5 +17,5 @@ get_corr_df(df.x, df.y = NULL, type = NULL)
 
 }
 \description{
-Title A function return correlation and p value in dataframe formate
+A function return correlation and p value in dataframe formate
 }
