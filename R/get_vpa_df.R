@@ -55,9 +55,15 @@ get_vpa_df <- function(vpa.res){
         mutate(env.type= stringr::word(row.names(.),1,sep="\\.")) %>%
         dplyr::select(8,1:7)
       env.frac <- mod.res$vpa$part$indfract$Adj.R.square
-      envfrac.df <- data.frame(env.type=names(mod.res$mod.sel),
-                               adjR2=env.frac[1:length(mod.res$mod.sel)],
-                               mod.p= (map_dbl(mod.res$mod.aov,function(x)x$`Pr(>F)`[1]))[names(mod.res$mod.sel)])
+      if (length(env.frac)==4){ # for varpart(sp, env1, env2)
+        envfrac.df <- data.frame(env.type=c(names(mod.res$mod.sel),"Residuals"),
+                                 adjR2=env.frac[c(1,3,4)],
+                                 mod.p= c((map_dbl(mod.res$mod.aov,function(x)x$`Pr(>F)`[1]))[names(mod.res$mod.sel)],NA))
+      } else { # for varpart (sp, env1, env2, env3) and varpart (sp, env1, env2, env3,env4)
+        envfrac.df <- data.frame(env.type=c(names(mod.res$mod.sel),"Residuals"),
+                                 adjR2=env.frac[1:(length(mod.res$mod.sel)+1)],
+                                 mod.p= c((map_dbl(mod.res$mod.aov,function(x)x$`Pr(>F)`[1]))[names(mod.res$mod.sel)],NA))
+      }
     }
     return(list(mod.sel=mod.sel, envfrac.df=envfrac.df))
 
