@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_log1p.R
 \name{my_log1p}
 \alias{my_log1p}
-\title{Title Customed log1p for data with negative value less than -1}
+\title{Customed log1p for data with negative value less than -1}
 \usage{
 my_log1p(x, base = exp(1))
 }
@@ -15,5 +15,5 @@ my_log1p(x, base = exp(1))
 a dataframe
 }
 \description{
-Title Customed log1p for data with negative value less than -1
+Customed log1p for data with negative value less than -1
 }

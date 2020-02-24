@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_vpa.R
 \name{my_vpa}
 \alias{my_vpa}
-\title{Title  community- and species- based variation partitioning}
+\title{Community- and species- based variation partitioning}
 \usage{
 my_vpa(
   sp,
@@ -36,5 +36,5 @@ the mode is chosed based on the max value of axis length in DCA analysis, i.e., 
 a list including raw data, model information, model results
 }
 \description{
-Title  community- and species- based variation partitioning
+Community- and species- based variation partitioning
 }
