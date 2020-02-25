@@ -22,9 +22,9 @@ get_vpa_df <- function(vpa.res){
     } else {
       indfrac <- res$vpa$part$indfract
       if (nrow(indfrac)==4){ # for varpart(sp, env1, env2)
-        envfrac.df <- data.frame(env.type=c(names(res$mode.res$mode.sig),"Residuals"),
+        envfrac.df <- data.frame(env.type=c(names(res$var.sel$mode.sel),"Residuals"),
                                  adj.r.squared=indfrac$Adj.R.square[c(1,3,4)],
-                                 mod.pvalue= c(res$mode.res$mode.adjR2$mod.pvalue[names(res$mode.res$mode.sig)],NA))
+                                 mod.pvalue= c(res$mode.res$mode.adjR2$mod.pvalue[names(res$var.sel$mode.sel)],NA))
       } else { # for varpart (sp, env1, env2, env3) and varpart (sp, env1, env2, env3,env4)
         envfrac.df <- data.frame(env.type=c(names(res$mode.res$mode.sig),"Residuals"),
                                  adj.r.squared=indfrac$Adj.R.square[c(1:(length(res$mode.res$mode.sig)),nrow(indfrac))],
