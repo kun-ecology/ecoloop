@@ -16,7 +16,7 @@ spM_trans <- function(sp, sp.trans=NULL){
   decostand.method <-  c("total","max","frequency","normalize","range","rank",
                          "standardize","pa","chi.square","hellinger","log")
   if (sp.trans=="none"){
-    sp.df <- sp
+    sp.df <- sp.num
   } else if (sp.trans %in% decostand.method){
     sp.df <- sp.num %>%
       vegan::decostand(method = sp.trans)
