@@ -27,7 +27,7 @@ get_vpa_df <- function(vpa.res){
                                  mod.pvalue= c(res$mode.res$mode.adjR2$mod.pvalue,NA))
       } else { # for varpart (sp, env1, env2, env3) and varpart (sp, env1, env2, env3,env4)
         envfrac.df <- data.frame(env.type=c(names(res$mode.res$mode.sig),"Residuals"),
-                                 adj.r.squared=indfrac$Adj.R.square[c(1:(length(res$mode.res$mode.sig)),length(indfrac))],
+                                 adj.r.squared=indfrac$Adj.R.square[c(1:(length(res$mode.res$mode.sig)),nrow(indfrac))],
                                  mod.pvalue= c(res$mode.res$mode.adjR2$mod.pvalue,NA))
       }
 
