@@ -14,11 +14,11 @@
 #' @examples
 spbased_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode="rda",force.mode=T,...){
   sp.f.ls <- map(1:ncol(sp),function(x){
-    sp.f %>%
+    sp %>%
       dplyr::select(x) %>%
       spM_trans(sp.trans=sp.trans)
   })
-  names(sp.f.ls) <- colnames(sp.f)
+  names(sp.f.ls) <- colnames(sp)
   cat("=============================== \n")
   cat("Species based VPA: \n")
   cat("=============================== \n")
