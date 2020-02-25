@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_vpa.R
 \name{my_vpa}
 \alias{my_vpa}
-\title{Community- and species- based variation partitioning}
+\title{Conduct VPA after CCA or RDA}
 \usage{
 my_vpa(
   sp,
@@ -10,31 +10,29 @@ my_vpa(
   sp.trans = NULL,
   env.trans = NULL,
   mode = NULL,
-  sp.based = NULL,
+  force.mode = NULL,
   ...
 )
 }
 \arguments{
-\item{sp}{species abundance data with sites as row while species as columns, raw data is needed if you want to run species-based VPA}
+\item{sp}{a dataframe, row as sites while column as species names}
 
-\item{env_ls}{a list containing at least two elements, while at most four elements;
-meaningful name are highly recommended, otherwise env1,env2 and etc will be used as the name}
+\item{env_ls}{a list, with environmental variables data as elements}
 
-\item{sp.trans}{transformation for spe data}
+\item{sp.trans}{a string, method for species data transformation}
 
-\item{env.trans}{transformation methos for env data, can be a vector with length 1 or with same length with env-ls}
+\item{env.trans}{a string, method for envrionmental data transformation}
 
-\item{mode}{which mode to use i.e., RDA or CCA, while do community- based VPA,
-the mode is chosed based on the max value of axis length in DCA analysis, i.e., axis length>4, CCA;
-3<= axis length <= 4, either RDA or CCA is fine, by default, here use RDA; axis length<3, RDA}
+\item{mode}{a string, when force.mode=F (default), it indicates which model to use when 3<dca.axlength<4
+when force.mode=T, it indicates which mode to conduct forcely}
 
-\item{sp.based}{species-based VPA or not, by default community-based VPA will be conducted}
+\item{force.mode}{T or F (default)}
 
-\item{...}{arguments for forward.sel in package adespatial}
+\item{...}{further argumens for adespatial::forward.sel}
 }
 \value{
-a list including raw data, model information, model results
+a list
 }
 \description{
-Community- and species- based variation partitioning
+Conduct VPA after CCA or RDA
 }
