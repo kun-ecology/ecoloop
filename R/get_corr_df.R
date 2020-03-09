@@ -10,7 +10,6 @@
 #' @examples
 get_corr_df <- function(df.x,df.y=NULL,type=NULL){
   df.x <- dplyr::select_if(df.x,is.numeric)
-  df.y <- dplyr::select_if(df.y,is.numeric)
   type <- ifelse(is.null(type),"pearson","spearman")
 
   specify_decimal <- function(x, k=NULL){
@@ -23,6 +22,7 @@ get_corr_df <- function(df.x,df.y=NULL,type=NULL){
     df.corr <- Hmisc::rcorr(df.x %>% as.matrix(),type=type)
     x.nm <- y.nm <- colnames(df.x)
   } else {
+    df.y <- dplyr::select_if(df.y,is.numeric)
     df.corr <- Hmisc::rcorr(df.x %>% as.matrix(),df.y %>% as.matrix(),type=type)
     x.nm <-  colnames(df.x)
     y.nm <- colnames(df.y)
