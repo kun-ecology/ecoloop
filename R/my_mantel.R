@@ -32,7 +32,7 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
   #####################
   # initiate x_mat
   if (class(x_mat)=="dist"){
-    x_mat.f <- x.mat
+    x_mat.f <- x_mat
     x_mat.df <- ecoloop::dist2df(x_mat.f) # for saving
     x.dist <- NA
     mantel.mod <- vegan::mantel(y_mat.f,x_mat.f,method = method,...)
