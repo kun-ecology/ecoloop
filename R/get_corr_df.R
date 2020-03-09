@@ -9,8 +9,8 @@
 #'
 #' @examples
 get_corr_df <- function(df.x,df.y=NULL,type=NULL){
-  df.x <- dplyr::select(df.x,is.numeric)
-  df.y <- dplyr::select(df.y,is.numeric)
+  df.x <- dplyr::select_if(df.x,is.numeric)
+  df.y <- dplyr::select_if(df.y,is.numeric)
   type <- ifelse(is.null(type),"pearson","spearman")
   p.cut <- ifelse(is.null(p.cut),0.05,0.1)
 

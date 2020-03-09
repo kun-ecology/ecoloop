@@ -33,7 +33,7 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
   # initiate x_mat
   if (class(x_mat)=="dist"){
     x_mat.f <- x.mat
-    x_mat.df <- ecoloop::dist2df(x_mat.f) # for saving 
+    x_mat.df <- ecoloop::dist2df(x_mat.f) # for saving
     x.dist <- NA
     mantel.mod <- vegan::mantel(y_mat.f,x_mat.f,method = method,...)
     mod.res <- data.frame(Mantel_Cor=mantel.mod$statistic,
@@ -42,11 +42,11 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
     if (is.null(x.dist)){
       stop("When x_mat is not a dissimilarity matrix, x.dist (method for dissimilarity) is needed \n")
     } else {
-      
+
       if (foreach==T){
         x_mat.num <- dplyr::select_if(x_mat,is.numeric)
         x_mat.f <- map(1:ncol(x_mat.num),function(n){
-          x_mat.n <- x_mat.num[,n,drop=F] %>% 
+          x_mat.n <- x_mat.num[,n,drop=F] %>%
             vegan::vegdist(method = x.dist)
         })
         names(x_mat.f) <- names(x_mat.num)
@@ -54,7 +54,7 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
         x_mat.df1 <- do.call(rbind.data.frame,x_mat.df0)
         x_mat.df <-  dplyr::bind_cols(x_mat.nm=rep(names(x_mat.f),map_dbl(x_mat.df0,nrow)),
                                       x_mat.df1)
-        
+
         ####################
         mantel.mod <- map(x_mat.f,function(dis){
           dis.mantel <- vegan::mantel(y_mat.f,dis,method = method,...)
@@ -63,10 +63,10 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
         mod.res <- map(mantel.mod,function(mod){
           data.frame(Mantel_Cor=mod$statistic,
                      Mantel_p=mod$signif)
-        }) %>% 
-          do.call(rbind.data.frame,.) %>% 
+        }) %>%
+          do.call(rbind.data.frame,.) %>%
           bind_cols(x_mat.nm=names(mantel.mod),.)
-        
+
       } else {
 
         x_mat.f <- vegan::vegdist(x_mat %>% dplyr::select_if(is.numeric), method = x.dist)
@@ -75,20 +75,24 @@ my_mantel <- function(y_mat, x_mat,y.dist=NULL, x.dist=NULL,foreach=NULL,method=
         mod.res <- data.frame(Mantel_Cor=mantel.mod$statistic,
                               Mantel_p=mantel.mod$signif)
       }
-      
-    
+
+
     }
   }
   ######################
   # final output
-  y_mat.df <- ecoloop::dist2df(y_mat.f)
-  xy_mat.df <- dplyr::left_join(x_mat.df, y_mat.df,by=c("dist.x","dist.y")) %>% 
+  y_mat.df <- ecoloop::dist2df(y_mat.f) %>%
+    dplyr::mutate_at(c("dist.x","dist.y"),as.character)
+  x_mat.df <- x_mat.df %>%
+    dplyr::mutate_at(c("dist.x","dist.y"),as.character)
+
+  xy_mat.df <- dplyr::left_join(x_mat.df, y_mat.df,by=c("dist.x","dist.y")) %>%
     dplyr::rename(Pair_x.nm="dist.x",Pair_y.nm="dist.y",x_mat.dist="value.x",y_mat.dist="value.y")
 
   res.f <- list(mode.info=list(y.dist=y.dist,x.dist=x.dist,method=method),
                 xy_mat.df=xy_mat.df,
                 mode=mantel.mod,
                 mode.res=mod.res)
-  
-  
+
+
 }
