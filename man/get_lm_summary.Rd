@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_lm_summary.R
 \name{get_lm_summary}
 \alias{get_lm_summary}
-\title{Get tidy results from linear, nls, lmer, lme mode}
+\title{Get tidy results from linear, nls, lmer, lme,  sarlm mode}
 \usage{
 get_lm_summary(lm.mod, CI = NULL, k = NULL)
 }
@@ -17,5 +17,5 @@ get_lm_summary(lm.mod, CI = NULL, k = NULL)
 
 }
 \description{
-Get tidy results from linear, nls, lmer, lme mode
+Get tidy results from linear, nls, lmer, lme,  sarlm mode
 }
