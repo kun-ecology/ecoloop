@@ -40,11 +40,11 @@ group_otu <- function(df,lower=NULL, upper=NULL, simplify=T){
   # Always rare taxa (ART) were defined as the OTUs with a relative abundance always < 0.01% in all samples.
   ART <- df.num.f %>%
     select_if(function(x) all(x<lower))
-  if(simplify==T){
+  if(simplify==F){
     final <- list(AAT=AAT,CAT=CAT,CRAT=CRAT,MT=MT, CRT=CRT, ART=ART)
   } else {
     final1 <- list(AAT,CAT, CRAT) %>% do.call(bind_cols,.) #dominant
-    final2 <- list(MT, CRT, ART) %>% do.call(bibind_cols,.) # rare
+    final2 <- list(MT, CRT, ART) %>% do.call(bind_cols,.) # rare
     final <- list(dominant=final1, rare=final2)
   }
   return(final)

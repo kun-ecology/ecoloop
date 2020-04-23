@@ -19,13 +19,13 @@ spbased_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode="rda",for
       spM_trans(sp.trans=sp.trans)
   })
   names(sp.f.ls) <- colnames(sp)
-  cat("=============================== \n")
-  cat("Species based VPA: \n")
-  cat("=============================== \n")
+  message("=============================== \n")
+  message("Species based VPA: \n")
+  message("=============================== \n")
   n <- length(sp.f.ls)
   spbased.vpa.f <- map(1:n,function(x){
-    cat(paste0("Processing ", names(sp.f.ls)[n], "(", x," otu of ",n, ") \n"))
-    cat("=============================== \n")
+    message(paste0("Processing ", names(sp.f.ls)[n], "(", x," out of ",n, ") \n"))
+    message("=============================== \n")
     df <- sp.f.ls[[x]]
     my_vpa(sp=df, env_ls = env_ls, sp.trans = "none",env.trans = env.trans,
            mode = mode, force.mode=force.mode)

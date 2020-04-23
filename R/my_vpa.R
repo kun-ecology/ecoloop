@@ -54,11 +54,11 @@ my_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode=NULL,
     }
     #print the mode will be used
     # print the axis length
-    cat("=============================== \n")
-    cat("Final model was selcted based on DCA: \n")
-    cat(paste("Max of axis length in DCA is: ",sp.dca.axleng %>% specify_decimal(2),"\n"))
-    cat(paste("Mode used: ", mode, "\n"))
-    cat("=============================== \n")
+    message("=============================== \n")
+    message("Final model was selcted based on DCA: \n")
+    message(paste("Max of axis length in DCA is: ",sp.dca.axleng %>% specify_decimal(2),"\n"))
+    message(paste("Mode used: ", mode, "\n"))
+    message("=============================== \n")
 
 
   } else { # when force.mode is true,
@@ -67,8 +67,8 @@ my_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode=NULL,
     if (is.null(mode)){
       stop("When force.mode = T, either rda or cca should be assigned to mode")
     }
-    cat("=============================== \n")
-    cat(paste("Mode used: ", mode, "\n"))
+    message("=============================== \n")
+    message(paste("Mode used: ", mode, "\n"))
   }
   #############################################################
   # conduct the mode
@@ -79,9 +79,9 @@ my_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode=NULL,
   }),silent = T)
 
   if (ncol(sp.f)>2000){
-    cat("=============================== \n")
-    cat("Extract RsquareAdj (May take minutes if species number is high) \n")
-    cat("=============================== \n")
+    message("=============================== \n")
+    message("Extract RsquareAdj (May take minutes if species number is high) \n")
+    message("=============================== \n")
   }
   # anova with the mode
   sp_ls.mod.aov <- try(map(sp_ls.mod,vegan::anova.cca),silent = T)
@@ -98,17 +98,17 @@ my_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode=NULL,
   none.sel <- data.frame(variables="none",order=NA, R2=NA, R2Cum=NA, AdjR2Cum=NA, F= NA, pvalue=NA)
 
   if (length(sp_ls.mod.sig)==0){ # no models is significant
-    cat("=============================== \n")
-    cat("Warning: none of the mode is significant \n")
-    cat("=============================== \n")
+    message("=============================== \n")
+    message("Warning: none of the mode is significant \n")
+    message("=============================== \n")
     mode.sel <- list(none=NA) # forward selection mode
     var.sel <- list(none=none.sel)
     vpa <- NA
   } else { # model is significant
     mode.sel <- names(sp_ls.mod.sig) %>%
       map(function(nm){
-        cat("=============================== \n")
-        cat(paste("Forward selection procedure for: ",nm, "\n"))
+        message("=============================== \n")
+        message(paste("Forward selection procedure for: ",nm, "\n"))
         md.sel <- try(adespatial::forward.sel(sp.f,env_ls.f[[nm]],...),silent = T)
 
       })
@@ -122,17 +122,17 @@ my_vpa <- function(sp, env_ls, sp.trans=NULL, env.trans=NULL,mode=NULL,
   # #####################################################
   ### extract selected variables
   if (length(mode.sel)==0) { # no variables was selected
-    cat("=============================== \n")
-    cat("Results of forward selections \n")
-    cat("Warning: no variables are selected \n")
-    cat("=============================== \n")
+    message("=============================== \n")
+    message("Results of forward selections \n")
+    message("Warning: no variables are selected \n")
+    message("=============================== \n")
     mode.sel <- list(none=none.sel)
     var.sel <- list(none="none")
     vpa <- NA
   } else if (sum(!is.na(mode.sel))<2){ # variables are selected but only 1 data matrix
-    cat("=============================== \n")
-    cat("Warning: two to four explanatory variables were needed for varpart \n")
-    cat("=============================== \n")
+    message("=============================== \n")
+    message("Warning: two to four explanatory variables were needed for varpart \n")
+    message("=============================== \n")
     var.sel <- map(mode.sel, function(mod){
       mod$variables %>% as.vector()
     })
