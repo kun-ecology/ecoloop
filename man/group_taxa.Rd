@@ -15,13 +15,6 @@ group_taxa(df, method, lower = NULL, upper = NULL, simplify = T)
 
 \item{simplify}{by default simplify=F, which will return AAT, CAT, CRAT, MT, CRT, ART; otherwise only dominant and rare taxa will return}
 }
-\value{
-
-}
 \description{
 Group taxa  into dominant and rare sub-communities
-}
-\examples{
-
-
 }

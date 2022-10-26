@@ -16,9 +16,6 @@ for each Resp.Vars and each Exp.Vars(set an arbitary value to type)}
 
 \item{collapse}{build addititive (+) models or models with interactions (*)}
 }
-\value{
-
-}
 \description{
 Construct formula with multipe response and explanatory variabels
 }

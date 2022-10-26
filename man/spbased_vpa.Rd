@@ -29,9 +29,6 @@ spbased_vpa(
 
 \item{...}{}
 }
-\value{
-
-}
 \description{
 Conduct species based VPA
 }

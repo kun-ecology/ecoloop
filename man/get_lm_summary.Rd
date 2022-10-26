@@ -13,9 +13,6 @@ get_lm_summary(lm.mod, CI = NULL, k = NULL)
 
 \item{k}{numbers of digits}
 }
-\value{
-
-}
 \description{
 Get tidy results from linear, nls, lmer, lme,  sarlm mode
 }

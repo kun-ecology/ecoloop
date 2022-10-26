@@ -13,9 +13,6 @@ get_corr_df(df.x, df.y = NULL, type = NULL)
 
 \item{type}{pearson (by defacult) or spearman correlation to be used}
 }
-\value{
-
-}
 \description{
 A function return correlation and p value in dataframe formate
 }

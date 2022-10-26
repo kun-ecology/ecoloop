@@ -15,9 +15,6 @@ get_aov.letter(resp.var, exp.var, data, p.adj = NULL)
 
 \item{p.adj}{methods for adjuted p value, see function aruguments methods in function p.adjust for more infomation}
 }
-\value{
-
-}
 \description{
 Get multiple comparison letters from anova (HSD.test,package agricolae)
 }

@@ -13,9 +13,6 @@ saveall(list_data, data.name, ...)
 
 \item{...}{further arguments for write.table}
 }
-\value{
-
-}
 \description{
 Save a list with non-dataframe data into csv/txt file
 }
