@@ -298,7 +298,7 @@ fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
 #' @param phy.dist a matrix containing phylogenetic distance
 #' @param abundance_weighted whether bNTI is abundance weighted
 #' @param exclude_conspecifics Should conspecific taxa in different communities be exclude from MNTD calculations? (default = FALSE)
-#' @param ses_bmntd if ses.bNTI or NTI be caculated
+#' @param ses_bmntd if ses.bNTI or NTI be calculated
 #' @param runs 999 random draws, can be set to to smaller number to reduce computation time
 #' @param nworkers numbers of cores used for computation
 #'
@@ -454,6 +454,245 @@ fst.comdistnt <- function(comm, phy.dist,
 
   invisible(res)
 
+
+}
+
+#' Title A function to calculate MPD or MNTD between native and aliens species
+#'
+#' @param comm a data.frame containing species abundance
+#' @param phy.dist a matrix containing phylogenetic distance
+#' @param native_sp.ls a vector containing native species
+#' @param invasive_sp.ls a vector containing native species
+#' @param ses_md2nat if ses.bNTI or NTI be calculated
+#' @param method MPD (default) or MNTD
+#' @param abundance_weighted should be indcies be abundance-weighted (default FALSE)
+#' @param nworkers numbers of cores used for computation
+#' @param runs 999 random draws, can be set to to smaller number to reduce computation time
+#'
+#' @return
+#' @export
+#'
+#' @examples
+md2nat <- function(comm, phy.dist, native_sp.ls,
+                   invasive_sp.ls,
+                   ses_md2nat=F,
+                   method="mpd",
+                   abundance_weighted=F,
+                   nworkers=NULL,
+                   runs = NULL
+){
+  require(furrr)
+
+  # initialize arguments
+  nworkers <- ifelse(is.null(nworkers), future::availableCores()-1, nworkers)
+  runs <- ifelse(is.null(runs), 999, runs)
+
+  # a function for shuffling taxa labels of the dist
+  taxaShuffle <- function(x) {
+    if (!is.matrix(x)) x <- as.matrix(x)
+    rand.names <- sample(rownames(x))
+    rownames(x) <- rand.names
+    colnames(x) <- rand.names
+    return(x)
+  }
+
+  # new phy.dist which only contains native_sp.ls and invasive_sp.ls
+  all.sp <- c(native_sp.ls, invasive_sp.ls)
+  phy.dist <- phy.dist[all.sp, all.sp]
+
+  # numbers of site
+  n.site <- nrow(comm)
+  spe.nm <- names(comm)
+
+  # nm = species names
+  # n = rows
+  # fn1 = function for mntd.obs
+  fn1 <- function(nat_abun, nat_spe, inv_abun, inv_spe){
+    if(length(nat_spe)==0 | length(inv_spe)==0){
+      mntd.obs <- NA
+    } else {
+      # for obs.mntd
+      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      dist.min <- apply(obs.dist, 2, function(x)x==min(x, na.rm = T))
+      mntds <- obs.dist[dist.min]
+      ######
+      if (abundance_weighted) {
+        obs.w <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
+        obs.w <- obs.w[dist.min]
+        mntd.obs <- weighted.mean(mntds, obs.w)
+      } else {
+        mntd.obs <- mean(mntds)
+      }
+    }
+    data.frame(mntd.obs=mntd.obs)
+  }
+
+  # a function for calculating ses.mntd
+  fn2 <- function(nat_abun, nat_spe, inv_abun, inv_spe){
+
+    if(length(nat_spe)==0 | length(inv_spe)==0){
+      mntd.obs <- NA
+      rand.mntd.mean <- NA
+      rand.mntd.sd <- NA
+      mntd.obs.z <- NA
+      mntd.obs.rank <- NA
+      mntd.obs.p <- NA
+      shuffled.dist <- NA
+    } else {
+      # for obs.mntd
+      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      dist.min <- apply(obs.dist, 2, function(x)x==min(x))
+      mntds <- obs.dist[dist.min]
+      obs.w.tmp <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
+      obs.w <- obs.w.tmp[dist.min]
+
+      ###########
+      # for rand mntd
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      names(shuffled.dist) <- paste0("r", 1:runs)
+      shuffled.dist <- map(shuffled.dist, ~ .x[nat_spe, inv_spe, drop=F])
+      #randomed mntds
+      shuffled.dist.min <- map(shuffled.dist, ~ apply(.x, 2, function(x)x==min(x)))
+      shuffled.mntds <- map2(shuffled.dist, shuffled.dist.min, ~ .x[.y])
+      shuffled.w <- map2(replicate(runs, obs.w.tmp, simplify = F),
+                         shuffled.dist.min, ~ .x[.y])
+
+      #######
+      if (abundance_weighted) {
+
+        mntd.obs <- weighted.mean(mntds, obs.w)
+        shuffled.mntd <-map2_dbl(shuffled.mntds, shuffled.w,  ~ weighted.mean(.x , .y, na.rm=T))
+      } else {
+        mntd.obs <- mean(mntds)
+        shuffled.mntd <-map_dbl(shuffled.mntds, mean, na.rm=T)
+      }
+
+      rand.mntd.mean <- mean(shuffled.mntd)
+      rand.mntd.sd <- sd(shuffled.mntd)
+      mntd.obs.z <- (mntd.obs - rand.mntd.mean)/rand.mntd.sd
+      mntd.obs.rank <- rank(c(mntd.obs, shuffled.mntd))[1]
+      mntd.obs.p <- mntd.obs.rank/(runs+1)
+    }
+
+    data.frame(mntd.obs=mntd.obs, rand.mntd.mean=rand.mntd.mean,
+               rand.mntd.sd=rand.mntd.sd, mntd.obs.rank=mntd.obs.rank,
+               mntd.obs.z=mntd.obs.z, mntd.obs.p=mntd.obs.p )
+    #shuffled.dist
+  }
+
+  # function for MPD.obs
+  fn3 <- function(nat_abun, nat_spe, inv_abun, inv_spe){
+
+    if(length(nat_spe)==0 | length(inv_spe)==0){
+      mpd.obs <- NA
+    } else {
+      # for obs.mpd
+      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      if (abundance_weighted) {
+        obs.w <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
+        mpd.obs <- weighted.mean(obs.dist, obs.w)
+      } else {
+        mpd.obs <- mean(obs.dist)
+      }
+    }
+
+    data.frame(mpd.obs=mpd.obs)
+  }
+
+  # a function for calculating ses.mpd
+  fn4 <- function(nat_abun, nat_spe, inv_abun, inv_spe){
+
+    if(length(nat_spe)==0 | length(inv_spe)==0){
+      mpd.obs <- NA
+      rand.mpd.mean <- NA
+      rand.mpd.sd <- NA
+      mpd.obs.z <- NA
+      mpd.obs.rank <- NA
+      mpd.obs.p <- NA
+    } else {
+      # for obs.mpd
+      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+
+
+      ###########
+      # for rand mpd
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      names(shuffled.dist) <- paste0("r", 1:runs)
+      shuffled.dist <- map(shuffled.dist, ~ .x[nat_spe, inv_spe, drop=F])
+
+      #######
+      if (abundance_weighted) {
+        obs.w <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
+        mpd.obs <- weighted.mean(obs.dist, obs.w)
+        shuffled.mpd <-map_dbl(shuffled.dist,  ~ weighted.mean(.x , obs.w))
+      } else {
+        mpd.obs <- mean(obs.dist)
+        shuffled.mpd <- map_dbl(shuffled.dist, mean)
+      }
+
+      rand.mpd.mean <- mean(shuffled.mpd)
+      rand.mpd.sd <- sd(shuffled.mpd)
+      mpd.obs.z <- (mpd.obs - rand.mpd.mean)/rand.mpd.sd
+      mpd.obs.rank <- rank(c(mpd.obs, shuffled.mpd))[1]
+      mpd.obs.p <- mpd.obs.rank/(runs+1)
+    }
+
+    data.frame(mpd.obs=mpd.obs, rand.mpd.mean=rand.mpd.mean,
+               rand.mpd.sd=rand.mpd.sd, mpd.obs.rank=mpd.obs.rank,
+               mpd.obs.z=mpd.obs.z, mpd.obs.p=mpd.obs.p )
+  }
+
+  plan("multisession", workers=nworkers)
+  # species occurred in each site
+  message("\nextracting invasive/native species for each community\n")
+
+  # native species in each site
+  nat_comm <- comm[,native_sp.ls, drop=F]
+  nat_abun.ls <- apply(nat_comm, 1, function(x)x[x>0])
+  nat_spe.ls <- apply(nat_comm, 1, function(x)native_sp.ls[x>0])
+
+  # invasive species in each site
+  inv_comm <- comm[,invasive_sp.ls, drop=F]
+  inv_abun.ls <- apply(inv_comm, 1, function(x)x[x>0])
+  inv_spe.ls <- apply(inv_comm, 1, function(x)invasive_sp.ls[x>0])
+
+  df.tmp <- tibble(
+    nat_abun.ls = apply(nat_comm, 1, function(x)x[x>0]),
+    nat_spe.ls = apply(nat_comm, 1, function(x)native_sp.ls[x>0]),
+    inv_abun.ls = apply(inv_comm, 1, function(x)x[x>0]),
+    inv_spe.ls = apply(inv_comm, 1, function(x)invasive_sp.ls[x>0])
+  )
+
+  message("\ncalculating md2nat for each community\n")
+  if (method=="mpd"){
+    if (ses_md2nat){
+      res.tmp <- future_pmap(df.tmp, ~ fn4(..1, ..2, ..3, ..4), .progress = T,
+                             .options = future_options(seed = TRUE))
+    } else {
+      res.tmp <- future_pmap(df.tmp, ~ fn3(..1, ..2, ..3, ..4), .progress = T,
+                             .options = future_options(seed = TRUE))
+    }
+  } else {
+    if (ses_md2nat){
+      res.tmp <- future_pmap(df.tmp, ~ fn2(..1, ..2, ..3, ..4), .progress = T,
+                             .options = future_options(seed = TRUE))
+    } else {
+      res.tmp <- future_pmap(df.tmp, ~ fn1(..1, ..2, ..3, ..4), .progress = T,
+                             .options = future_options(seed = TRUE))
+    }
+  }
+
+  plan("sequential")
+
+  gc()
+
+
+  res.df <- res.tmp %>%
+    do.call(rbind.data.frame,.) %>%
+    bind_cols(site=row.names(comm),
+              native.ntaxa=map_int(nat_spe.ls, length),
+              invasive.ntaxa=map_int(inv_spe.ls, length),.) %>%
+    as_tibble()
 
 }
 
