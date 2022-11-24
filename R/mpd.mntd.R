@@ -666,19 +666,15 @@ md2nat <- function(comm, phy.dist, native_sp.ls,
   message("\ncalculating md2nat for each community\n")
   if (method=="mpd"){
     if (ses_md2nat){
-      res.tmp <- future_pmap(df.tmp, ~ fn4(..1, ..2, ..3, ..4), .progress = T,
-                             .options = future_options(seed = TRUE))
+      res.tmp <- future_pmap(df.tmp, ~ fn4(..1, ..2, ..3, ..4), .progress = T)
     } else {
-      res.tmp <- future_pmap(df.tmp, ~ fn3(..1, ..2, ..3, ..4), .progress = T,
-                             .options = future_options(seed = TRUE))
+      res.tmp <- future_pmap(df.tmp, ~ fn3(..1, ..2, ..3, ..4), .progress = T)
     }
   } else {
     if (ses_md2nat){
-      res.tmp <- future_pmap(df.tmp, ~ fn2(..1, ..2, ..3, ..4), .progress = T,
-                             .options = future_options(seed = TRUE))
+      res.tmp <- future_pmap(df.tmp, ~ fn2(..1, ..2, ..3, ..4), .progress = T)
     } else {
-      res.tmp <- future_pmap(df.tmp, ~ fn1(..1, ..2, ..3, ..4), .progress = T,
-                             .options = future_options(seed = TRUE))
+      res.tmp <- future_pmap(df.tmp, ~ fn1(..1, ..2, ..3, ..4), .progress = T)
     }
   }
 
