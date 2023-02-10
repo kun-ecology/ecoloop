@@ -85,7 +85,7 @@ lme_var.part <- function(full_mod){
 #'
 rand_var.part <- function(mod){
   # Get the variance explained per level:
-  var.expl = as.data.frame(VarCorr(mix.mod))
+  var.expl = as.data.frame(VarCorr(mod))
   # Calculate the total variance explained
   Tvar = sum(var.expl$vcov)
   # Calculate the % of the total variance explained by each level
