@@ -4,12 +4,14 @@
 \alias{specify_decimal}
 \title{Specify decimal number for numeric data}
 \usage{
-specify_decimal(x, k = NULL)
+specify_decimal(x, k = NULL, extra = FALSE)
 }
 \arguments{
 \item{x}{a numeric vector}
 
 \item{k}{numbers of digits}
+
+\item{extra}{}
 }
 \value{
 a character
