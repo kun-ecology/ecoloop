@@ -80,6 +80,9 @@ lme_var.part <- function(full_mod){
 #' The remaining variance was explained by trait differences between conspecific plants growing
 #' in different replicate plots at the same elevation (Albert et al., 2010)."
 #'
+#' note that the random terms are ranked in this way: (1|Level3/Level2/Level1). Additionally, the order of these
+#' terms do not affect the results.
+#'
 #'
 #' @examples
 #'
@@ -91,7 +94,8 @@ rand_var.part <- function(mod){
   # Calculate the % of the total variance explained by each level
   tmp <- var.expl$vcov
   var.expl <- map_dbl(tmp, ~ (.x/Tvar)*100)
-  res <- data.frame(term = c(paste("Lvl", length(tmp), sep="_"), "residual"),
+  res <- data.frame(lvl= c(paste("Lvl", 1:(length(tmp)-1), sep="_"), "residual"),
+                    terms = word(names(mod@cnms), sep = ":", 1),
                     var.explained = var.expl
   )
   return(res)

@@ -21,4 +21,7 @@ see https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2435.13723
 dependent factor and only random effects (‘elevation’ (i.e. conspecific plants between elevations) nested in ‘species’ nested in ‘growth form’].
 The remaining variance was explained by trait differences between conspecific plants growing
 in different replicate plots at the same elevation (Albert et al., 2010)."
+
+note that the random terms are ranked in this way: (1|Level3/Level2/Level1). Additionally, the order of these
+terms do not affect the results.
 }
