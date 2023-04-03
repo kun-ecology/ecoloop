@@ -11,7 +11,7 @@
 specify_decimal <- function(x, k=NULL, extra = FALSE){
 
 
-  if (type){
+  if (extra){
      tmp <- 10^(-(k+1))*5
      x.k <- ifelse(abs(x)<tmp,
             round(x, digits = k+1) %>%  format(nsmall = k+1) %>%  trimws(),
