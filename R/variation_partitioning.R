@@ -95,7 +95,7 @@ rand_var.part <- function(mod){
   tmp <- var.expl$vcov
   var.expl <- map_dbl(tmp, ~ (.x/Tvar)*100)
   res <- data.frame(lvl= c(paste("Lvl", 1:(length(tmp)-1), sep="_"), "residual"),
-                    terms = word(names(mod@cnms), sep = ":", 1),
+                    terms = c(word(names(mod@cnms), sep = ":", 1), "residual"),
                     var.explained = var.expl
   )
   return(res)
