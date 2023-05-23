@@ -1,4 +1,4 @@
-#' Title Fast computation of MPD and SES.MPD
+#' Fast computation of MPD and SES.MPD
 #'
 #' @param comm a data.frame containing species abundance
 #' @param phy.dist a matrix containing phylogenetic distance
@@ -141,7 +141,7 @@ fst.ses.mpd <- function(comm,
 
 #######################
 
-#' Title fast computation of MNTD/SES.MNTD
+#'  fast computation of MNTD/SES.MNTD
 #'
 #' @param comm a data.frame containing species abundance
 #' @param phy.dist a matrix containing phylogenetic distance
@@ -292,7 +292,7 @@ fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
 
 
 
-#' Title fast computation of inter-community mean nearest taxon distance (bNTI)
+#'  fast computation of inter-community mean nearest taxon distance (bNTI)
 #'
 #' @param comm a data.frame containing species abundance
 #' @param phy.dist a matrix containing phylogenetic distance
@@ -457,7 +457,7 @@ fst.comdistnt <- function(comm, phy.dist,
 
 }
 
-#' Title A function to calculate MPD or MNTD between native and aliens species
+#' A function to calculate MPD or MNTD between native and aliens species
 #'
 #' @param comm a data.frame containing species abundance
 #' @param phy.dist a matrix containing phylogenetic distance

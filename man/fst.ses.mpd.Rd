@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpd.mntd.R
 \name{fst.ses.mpd}
 \alias{fst.ses.mpd}
-\title{Title Fast computation of MPD and SES.MPD}
+\title{Fast computation of MPD and SES.MPD}
 \usage{
 fst.ses.mpd(
   comm,
@@ -30,5 +30,5 @@ fst.ses.mpd(
 \item{runs}{usually 999 random draws, can be set to to smaller number to reduce computation time}
 }
 \description{
-Title Fast computation of MPD and SES.MPD
+Fast computation of MPD and SES.MPD
 }

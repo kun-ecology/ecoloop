@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpd.mntd.R
 \name{fst.comdistnt}
 \alias{fst.comdistnt}
-\title{Title fast computation of inter-community mean nearest taxon distance (bNTI)}
+\title{fast computation of inter-community mean nearest taxon distance (bNTI)}
 \usage{
 fst.comdistnt(
   comm,
@@ -30,5 +30,5 @@ fst.comdistnt(
 \item{nworkers}{numbers of cores used for computation}
 }
 \description{
-Title fast computation of inter-community mean nearest taxon distance (bNTI)
+fast computation of inter-community mean nearest taxon distance (bNTI)
 }

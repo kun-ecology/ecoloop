@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpd.mntd.R
 \name{fst.ses.mntd}
 \alias{fst.ses.mntd}
-\title{Title fast computation of MNTD/SES.MNTD}
+\title{fast computation of MNTD/SES.MNTD}
 \usage{
 fst.ses.mntd(
   comm,
@@ -30,5 +30,5 @@ fst.ses.mntd(
 \item{runs}{usually 999 random draws, can be set to to smaller number to reduce computation time}
 }
 \description{
-Title fast computation of MNTD/SES.MNTD
+fast computation of MNTD/SES.MNTD
 }

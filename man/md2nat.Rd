@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpd.mntd.R
 \name{md2nat}
 \alias{md2nat}
-\title{Title A function to calculate MPD or MNTD between native and aliens species}
+\title{A function to calculate MPD or MNTD between native and aliens species}
 \usage{
 md2nat(
   comm,
@@ -36,5 +36,5 @@ md2nat(
 \item{runs}{999 random draws, can be set to to smaller number to reduce computation time}
 }
 \description{
-Title A function to calculate MPD or MNTD between native and aliens species
+A function to calculate MPD or MNTD between native and aliens species
 }

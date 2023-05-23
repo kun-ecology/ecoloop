@@ -18,7 +18,6 @@
 #'    (R2 of model of focal variable plus R2 of model without focal variable minus R2 of full model, divided by R2 of full model)
 #'    were calculated as well (SI Appendix, Tables S7–S9). This variance partitioning could not be performed for the models
 #'    of probability of flower production, because this probability was zero in the undisturbed subplots in the Scandes."
-#'
 #' @examples
 lme_var.part <- function(full_mod){
   require(MuMIn)
