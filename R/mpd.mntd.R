@@ -16,7 +16,7 @@ fst.ses.mpd <- function(comm,
                         phy.dist,
                         null_model = "taxaShuffle",
                         nworkers = NULL,
-                        ses.mpd = F,
+                        ses = F,
                         abundance_weighted = F,
                         runs = NULL) {
   require(tidyverse)
@@ -116,7 +116,7 @@ fst.ses.mpd <- function(comm,
   site.spe <- apply(comm,1, function(x)spe.nm[x>0])
   #########
   # loop for each site
-  if (ses.mpd) {
+  if (ses) {
     res.ls <- future_imap(site.spe, fn2, .progress = T)
     res.df <- do.call(bind_rows, res.ls) %>%
       bind_cols(runs = rep(runs, nrow(.))) %>%
@@ -309,9 +309,9 @@ fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
 fst.comdistnt <- function(comm, phy.dist,
                           abundance_weighted=FALSE,
                           exclude_conspecifics=FALSE,
-                          ses_bmntd=F,
-                          runs=NULL,
-                          nworkers=NULL
+                          ses = F,
+                          runs = NULL,
+                          nworkers = NULL
 ){
   # make sure species names in comm and dist match to each other
   # make sure dist is of dist class
@@ -401,7 +401,7 @@ fst.comdistnt <- function(comm, phy.dist,
 
   ######################
   plan("multisession", workers=nworkers)
-  if (ses_bmntd) {
+  if (ses) {
     message("calculating observed mntd\n")
     mntd.obs <-future_map_dbl(site.pair, ~ fn(.x, phy.dist = phy.dist,
                                               abundance_weighted =abundance_weighted,
@@ -475,7 +475,7 @@ fst.comdistnt <- function(comm, phy.dist,
 #' @examples
 md2nat <- function(comm, phy.dist, native_sp.ls,
                    invasive_sp.ls,
-                   ses_md2nat=F,
+                   ses = F,
                    method="mpd",
                    abundance_weighted=F,
                    nworkers=NULL,
@@ -665,13 +665,13 @@ md2nat <- function(comm, phy.dist, native_sp.ls,
 
   message("\ncalculating md2nat for each community\n")
   if (method=="mpd"){
-    if (ses_md2nat){
+    if (ses){
       res.tmp <- future_pmap(df.tmp, ~ fn4(..1, ..2, ..3, ..4), .progress = T)
     } else {
       res.tmp <- future_pmap(df.tmp, ~ fn3(..1, ..2, ..3, ..4), .progress = T)
     }
   } else {
-    if (ses_md2nat){
+    if (ses){
       res.tmp <- future_pmap(df.tmp, ~ fn2(..1, ..2, ..3, ..4), .progress = T)
     } else {
       res.tmp <- future_pmap(df.tmp, ~ fn1(..1, ..2, ..3, ..4), .progress = T)
@@ -685,9 +685,9 @@ md2nat <- function(comm, phy.dist, native_sp.ls,
 
   res.df <- res.tmp %>%
     do.call(rbind.data.frame,.) %>%
-    bind_cols(site=row.names(comm),
-              native.ntaxa=map_int(nat_spe.ls, length),
-              invasive.ntaxa=map_int(inv_spe.ls, length),.) %>%
+    bind_cols(site=row.names(comm), .) %>%
+  #   native.ntaxa=map_int(nat_spe.ls, length),
+  # invasive.ntaxa=map_int(inv_spe.ls, length),.
     as_tibble()
 
 }

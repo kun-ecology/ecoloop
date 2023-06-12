@@ -9,7 +9,7 @@ md2nat(
   phy.dist,
   native_sp.ls,
   invasive_sp.ls,
-  ses_md2nat = F,
+  ses = F,
   method = "mpd",
   abundance_weighted = F,
   nworkers = NULL,
@@ -25,8 +25,6 @@ md2nat(
 
 \item{invasive_sp.ls}{a vector containing native species}
 
-\item{ses_md2nat}{if ses.bNTI or NTI be calculated}
-
 \item{method}{MPD (default) or MNTD}
 
 \item{abundance_weighted}{should be indcies be abundance-weighted (default FALSE)}
@@ -34,6 +32,8 @@ md2nat(
 \item{nworkers}{numbers of cores used for computation}
 
 \item{runs}{999 random draws, can be set to to smaller number to reduce computation time}
+
+\item{ses_md2nat}{if ses.bNTI or NTI be calculated}
 }
 \description{
 A function to calculate MPD or MNTD between native and aliens species
