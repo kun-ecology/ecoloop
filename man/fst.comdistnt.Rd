@@ -23,11 +23,11 @@ fst.comdistnt(
 
 \item{exclude_conspecifics}{Should conspecific taxa in different communities be exclude from MNTD calculations? (default = FALSE)}
 
+\item{ses}{if ses.bNTI or NTI be calculated}
+
 \item{runs}{999 random draws, can be set to to smaller number to reduce computation time}
 
 \item{nworkers}{numbers of cores used for computation}
-
-\item{ses_bmntd}{if ses.bNTI or NTI be calculated}
 }
 \description{
 fast computation of inter-community mean nearest taxon distance (bNTI)

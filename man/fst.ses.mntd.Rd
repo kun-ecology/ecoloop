@@ -9,7 +9,7 @@ fst.ses.mntd(
   phy.dist,
   null_model = "taxaShuffle",
   nworkers = NULL,
-  ses_mntd = NULL,
+  ses = NULL,
   abundance_weighted = F,
   runs = NULL
 )
@@ -23,7 +23,7 @@ fst.ses.mntd(
 
 \item{nworkers}{numbers of cores used for computation}
 
-\item{ses_mntd}{if SES.MPD should be calculated}
+\item{ses}{if SES.MNTD should be calculated}
 
 \item{abundance_weighted}{whether MNTD/SES.MNTD is abundance weighted}
 

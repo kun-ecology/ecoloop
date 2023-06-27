@@ -4,7 +4,7 @@
 #' @param phy.dist a matrix containing phylogenetic distance
 #' @param null_model only implemented for random taxa.labels
 #' @param nworkers numbers of cores used for computation
-#' @param ses.mpd if SES.MPD should be calculated
+#' @param ses if SES.MPD should be calculated
 #' @param abundance_weighted whether MPD/SES.MPD is abundance weighted
 #' @param runs usually 999 random draws, can be set to to smaller number to reduce computation time
 #'
@@ -147,7 +147,7 @@ fst.ses.mpd <- function(comm,
 #' @param phy.dist a matrix containing phylogenetic distance
 #' @param null_model only implemented for random taxa.labels
 #' @param nworkers numbers of cores used for computation
-#' @param ses_mntd if SES.MPD should be calculated
+#' @param ses if SES.MNTD should be calculated
 #' @param abundance_weighted whether MNTD/SES.MNTD is abundance weighted
 #' @param runs usually 999 random draws, can be set to to smaller number to reduce computation time
 #'
@@ -155,13 +155,15 @@ fst.ses.mpd <- function(comm,
 #' @export
 #'
 #' @examples
-fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
+fst.ses.mntd <- function(comm, phy.dist,
+                         null_model="taxaShuffle",
                          nworkers = NULL,
-                         ses_mntd=NULL,
-                         abundance_weighted=F, runs=NULL){
+                         ses = NULL,
+                         abundance_weighted=F,
+                         runs=NULL){
   require(tidyverse)
   require(furrr)
-  ses_mntd <- ifelse(is.null(ses_mntd), F, T)
+  ses <- ifelse(is.null(ses), F, T)
 
   options(future.rng.onMisuse="ignore")
   # a function for shuffling taxa labels of the dist
@@ -268,7 +270,7 @@ fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
 
 
   # loop for each site
-  if (ses_mntd){
+  if (ses){
     res.ls <- future_imap(site.spe, fn2, .progress=T)
     res.df <- do.call(bind_rows, res.ls) %>%
       bind_cols(runs=rep(runs, nrow(.))) %>%
@@ -298,7 +300,7 @@ fst.ses.mntd <- function(comm, phy.dist, null_model="taxaShuffle",
 #' @param phy.dist a matrix containing phylogenetic distance
 #' @param abundance_weighted whether bNTI is abundance weighted
 #' @param exclude_conspecifics Should conspecific taxa in different communities be exclude from MNTD calculations? (default = FALSE)
-#' @param ses_bmntd if ses.bNTI or NTI be calculated
+#' @param ses if ses.bNTI or NTI be calculated
 #' @param runs 999 random draws, can be set to to smaller number to reduce computation time
 #' @param nworkers numbers of cores used for computation
 #'
@@ -463,7 +465,7 @@ fst.comdistnt <- function(comm, phy.dist,
 #' @param phy.dist a matrix containing phylogenetic distance
 #' @param native_sp.ls a vector containing native species
 #' @param invasive_sp.ls a vector containing native species
-#' @param ses_md2nat if ses.bNTI or NTI be calculated
+#' @param ses if ses.bNTI or bNTI be calculated
 #' @param method MPD (default) or MNTD
 #' @param abundance_weighted should be indcies be abundance-weighted (default FALSE)
 #' @param nworkers numbers of cores used for computation
@@ -473,7 +475,9 @@ fst.comdistnt <- function(comm, phy.dist,
 #' @export
 #'
 #' @examples
-md2nat <- function(comm, phy.dist, native_sp.ls,
+md2nat <- function(comm,
+                   phy.dist,
+                   native_sp.ls,
                    invasive_sp.ls,
                    ses = F,
                    method="mpd",
@@ -685,9 +689,10 @@ md2nat <- function(comm, phy.dist, native_sp.ls,
 
   res.df <- res.tmp %>%
     do.call(rbind.data.frame,.) %>%
-    bind_cols(site=row.names(comm), .) %>%
-  #   native.ntaxa=map_int(nat_spe.ls, length),
-  # invasive.ntaxa=map_int(inv_spe.ls, length),.
+    bind_cols(site=row.names(comm),
+              native.ntaxa=map_int(nat_spe.ls, length),
+              invasive.ntaxa=map_int(inv_spe.ls, length),.) %>%
+
     as_tibble()
 
 }

@@ -23,11 +23,11 @@ fst.ses.mpd(
 
 \item{nworkers}{numbers of cores used for computation}
 
+\item{ses}{if SES.MPD should be calculated}
+
 \item{abundance_weighted}{whether MPD/SES.MPD is abundance weighted}
 
 \item{runs}{usually 999 random draws, can be set to to smaller number to reduce computation time}
-
-\item{ses.mpd}{if SES.MPD should be calculated}
 }
 \description{
 Fast computation of MPD and SES.MPD
