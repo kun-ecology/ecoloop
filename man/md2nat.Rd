@@ -6,7 +6,7 @@
 \usage{
 md2nat(
   comm,
-  phy.dist,
+  phy_dist,
   native_sp.ls,
   invasive_sp.ls,
   ses = F,
@@ -19,7 +19,7 @@ md2nat(
 \arguments{
 \item{comm}{a data.frame containing species abundance}
 
-\item{phy.dist}{a matrix containing phylogenetic distance}
+\item{phy_dist}{a matrix containing phylogenetic distance}
 
 \item{native_sp.ls}{a vector containing native species}
 

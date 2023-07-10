@@ -6,7 +6,7 @@
 \usage{
 fst.ses.mntd(
   comm,
-  phy.dist,
+  phy_dist,
   null_model = "taxaShuffle",
   nworkers = NULL,
   ses = NULL,
@@ -17,7 +17,7 @@ fst.ses.mntd(
 \arguments{
 \item{comm}{a data.frame containing species abundance}
 
-\item{phy.dist}{a matrix containing phylogenetic distance}
+\item{phy_dist}{a matrix containing phylogenetic distance}
 
 \item{null_model}{only implemented for random taxa.labels}
 

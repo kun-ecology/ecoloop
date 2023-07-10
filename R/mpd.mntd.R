@@ -1,7 +1,7 @@
 #' Fast computation of MPD and SES.MPD
 #'
-#' @param comm a data.frame containing species abundance
-#' @param phy.dist a matrix containing phylogenetic distance
+#' @param comm a data.frame containing species abundance, better set site name as rowname
+#' @param phy_dist a matrix containing phylogenetic distance
 #' @param null_model only implemented for random taxa.labels
 #' @param nworkers numbers of cores used for computation
 #' @param ses if SES.MPD should be calculated
@@ -13,7 +13,7 @@
 #'
 #' @examples
 fst.ses.mpd <- function(comm,
-                        phy.dist,
+                        phy_dist,
                         null_model = "taxaShuffle",
                         nworkers = NULL,
                         ses = F,
@@ -42,7 +42,7 @@ fst.ses.mpd <- function(comm,
     } else {
       # for obs.mpd
       comm.tmp <- comm[n, nm]
-      obs.dist <- phy.dist[nm, nm]
+      obs.dist <- phy_dist[nm, nm]
       if (abundance_weighted) {
         obs.w <- t(as.matrix(comm.tmp)) %*% as.matrix(comm.tmp)
         mpd.obs <- weighted.mean(obs.dist, obs.w)
@@ -51,7 +51,7 @@ fst.ses.mpd <- function(comm,
       }
     }
 
-    data.frame(ntaxa=ntaxa, mpd.obs=mpd.obs)
+    data.frame(ntaxa=ntaxa, obs=mpd.obs)
   }
 
   # a function for calculating ses.mpd
@@ -69,12 +69,12 @@ fst.ses.mpd <- function(comm,
     } else {
       # for obs.mpd
       comm.tmp <- comm[n, nm]
-      obs.dist <- phy.dist[nm, nm]
+      obs.dist <- phy_dist[nm, nm]
       obs.w <- t(as.matrix(comm.tmp)) %*% as.matrix(comm.tmp)
 
       ###########
       # for rand mpd
-      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy_dist))
       names(shuffled.dist) <- paste0("r", 1:runs)
       shuffled.dist <- map(shuffled.dist, ~ .x[nm, nm])
 
@@ -95,15 +95,22 @@ fst.ses.mpd <- function(comm,
     }
 
     #list(rand.mpd.mean, rand.mpd.sd, mpd.obs.z, mpd.obs.rank, mpd.obs.p)
-    data.frame(ntaxa=ntaxa, mpd.obs=mpd.obs, rand.mpd.mean=rand.mpd.mean,
-               rand.mpd.sd=rand.mpd.sd, mpd.obs.rank=mpd.obs.rank,
-               mpd.obs.z=mpd.obs.z, mpd.obs.p=mpd.obs.p )
+    data.frame(
+      ntaxa = ntaxa,
+      obs = mpd.obs,
+      rand.mean = rand.mpd.mean,
+      rand.sd = rand.mpd.sd,
+      obs.rank = mpd.obs.rank,
+      obs.z = mpd.obs.z,
+      obs.z.p = mpd.obs.p
+    )
+
   }
 
   ##################
   # initialize arguments
   runs <- ifelse(is.null(runs), 999, runs)
-  nworkers <- ifelse(is.null(nworkers), future::availableCores()-1, nworkers)
+  nworkers <- ifelse(is.null(nworkers), future::availableCores()/2, nworkers)
 
 
   ############
@@ -118,25 +125,22 @@ fst.ses.mpd <- function(comm,
   # loop for each site
   if (ses) {
     res.ls <- future_imap(site.spe, fn2, .progress = T)
-    res.df <- do.call(bind_rows, res.ls) %>%
-      bind_cols(runs = rep(runs, nrow(.))) %>%
-      mutate(runs = ifelse(ntaxa == 1, NA, runs)) %>%
-      as.data.frame()
   } else {
     res.ls <- future_imap(site.spe, fn1, .progress = T)
-    res.df <- do.call(bind_rows, res.ls) %>% as.data.frame()
   }
   plan("sequential")
   gc()
 
-  # add row.names if availiable
-  if (!is.null(row.names(comm))) row.names(res.df) <- row.names(comm)
+  res.df <- do.call(bind_rows, res.ls)
+
+  # add row.names if available
+  if (!is.null(row.names(comm))) {
+    res.df <- bind_cols(site = row.names(comm), res.df)
+  }
 
   message("\n")
-  invisible(res.df)
+  return(res.df)
 }
-
-
 
 
 #######################
@@ -144,7 +148,7 @@ fst.ses.mpd <- function(comm,
 #'  fast computation of MNTD/SES.MNTD
 #'
 #' @param comm a data.frame containing species abundance
-#' @param phy.dist a matrix containing phylogenetic distance
+#' @param phy_dist a matrix containing phylogenetic distance
 #' @param null_model only implemented for random taxa.labels
 #' @param nworkers numbers of cores used for computation
 #' @param ses if SES.MNTD should be calculated
@@ -155,7 +159,8 @@ fst.ses.mpd <- function(comm,
 #' @export
 #'
 #' @examples
-fst.ses.mntd <- function(comm, phy.dist,
+fst.ses.mntd <- function(comm,
+                         phy_dist,
                          null_model="taxaShuffle",
                          nworkers = NULL,
                          ses = NULL,
@@ -184,7 +189,7 @@ fst.ses.mntd <- function(comm, phy.dist,
     } else {
       # for obs.mntd
       comm.tmp <- comm[n, nm]
-      obs.dist <- phy.dist[nm, nm]
+      obs.dist <- phy_dist[nm, nm]
       diag(obs.dist) <- NA
       obs.w <- as.matrix(comm.tmp)
       #######
@@ -197,7 +202,7 @@ fst.ses.mntd <- function(comm, phy.dist,
       }
     }
 
-    data.frame(ntaxa=ntaxa, mntd.obs=mntd.obs)
+    data.frame(ntaxa=ntaxa, obs=mntd.obs)
   }
 
   # a function for calculating ses.mntd
@@ -214,13 +219,13 @@ fst.ses.mntd <- function(comm, phy.dist,
     } else {
       # for obs.mntd
       comm.tmp <- comm[n, nm]
-      obs.dist <- phy.dist[nm, nm]
+      obs.dist <- phy_dist[nm, nm]
       diag(obs.dist) <- NA
       obs.w <- as.matrix(comm.tmp)
 
       ###########
       # for rand mntd
-      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy_dist))
       names(shuffled.dist) <- paste0("r", 1:runs)
       shuffled.dist <- map(shuffled.dist, ~ .x[nm, nm])
       shuffled.dist <- map(shuffled.dist, function(x){diag(x) <- NA; x})
@@ -246,15 +251,21 @@ fst.ses.mntd <- function(comm, phy.dist,
     }
 
     #list(rand.mntd.mean, rand.mntd.sd, mntd.obs.z, mntd.obs.rank, mntd.obs.p)
-    data.frame(ntaxa=ntaxa, mntd.obs=mntd.obs, rand.mntd.mean=rand.mntd.mean,
-               rand.mntd.sd=rand.mntd.sd, mntd.obs.rank=mntd.obs.rank,
-               mntd.obs.z=mntd.obs.z, mntd.obs.p=mntd.obs.p )
+    data.frame(
+      ntaxa = ntaxa,
+      obs = mntd.obs,
+      rand.mean = rand.mntd.mean,
+      rand.sd = rand.mntd.sd,
+      obs.rank = mntd.obs.rank,
+      obs.z = mntd.obs.z,
+      obs.z.p = mntd.obs.p
+    )
   }
 
   ##################
   # initialize arguments
   runs <- ifelse(is.null(runs), 999, runs)
-  nworkers <- ifelse(is.null(nworkers), future::availableCores()-1, nworkers)
+  nworkers <- ifelse(is.null(nworkers), future::availableCores()/2, nworkers)
 
 
   ############
@@ -272,24 +283,22 @@ fst.ses.mntd <- function(comm, phy.dist,
   # loop for each site
   if (ses){
     res.ls <- future_imap(site.spe, fn2, .progress=T)
-    res.df <- do.call(bind_rows, res.ls) %>%
-      bind_cols(runs=rep(runs, nrow(.))) %>%
-      mutate(runs=ifelse(ntaxa==1, NA, runs))
   } else {
     res.ls <- future_imap(site.spe, fn1, .progress=T)
-    res.df <- do.call(bind_rows, res.ls)
   }
 
   plan("sequential")
-
-
   gc()
 
+  res.df <- do.call(bind_rows, res.ls)
   # add row.names if availiable
-  if (!is.null(row.names(comm))) row.names(res.df) <- row.names(comm)
+  if (!is.null(row.names(comm))) {
+    res.df <- bind_cols(site = row.names(comm), res.df)
+  }
 
   message("\n")
-  invisible(res.df)
+  return(res.df)
+
 }
 
 
@@ -297,7 +306,7 @@ fst.ses.mntd <- function(comm, phy.dist,
 #'  fast computation of inter-community mean nearest taxon distance (bNTI)
 #'
 #' @param comm a data.frame containing species abundance
-#' @param phy.dist a matrix containing phylogenetic distance
+#' @param phy_dist a matrix containing phylogenetic distance
 #' @param abundance_weighted whether bNTI is abundance weighted
 #' @param exclude_conspecifics Should conspecific taxa in different communities be exclude from MNTD calculations? (default = FALSE)
 #' @param ses if ses.bNTI or NTI be calculated
@@ -308,12 +317,13 @@ fst.ses.mntd <- function(comm, phy.dist,
 #' @export
 #'
 #' @examples
-fst.comdistnt <- function(comm, phy.dist,
-                          abundance_weighted=FALSE,
+fst.comdistnt <- function(comm,
+                          phy_dist,
                           exclude_conspecifics=FALSE,
+                          nworkers = NULL,
                           ses = F,
-                          runs = NULL,
-                          nworkers = NULL
+                          abundance_weighted=FALSE,
+                          runs = NULL
 ){
   # make sure species names in comm and dist match to each other
   # make sure dist is of dist class
@@ -335,7 +345,7 @@ fst.comdistnt <- function(comm, phy.dist,
 
   # initialize arguments
   runs <- ifelse(is.null(runs), 999, runs)
-  nworkers <- ifelse(is.null(nworkers), future::availableCores()-1, nworkers)
+  nworkers <- ifelse(is.null(nworkers), future::availableCores()/2, nworkers)
 
   # numbers of site
   n.site <- nrow(comm)
@@ -353,7 +363,7 @@ fst.comdistnt <- function(comm, phy.dist,
 
   # a function that calculate mean nearest taxon distance for two set of species names and
   # a given phylogenetic distance
-  fn <- function(nm.ls, phy.dist, abundance_weighted, exclude_conspecifics){
+  fn <- function(nm.ls, phy_dist, abundance_weighted, exclude_conspecifics){
     nm1 <- nm.ls[1]
     nm2 <- nm.ls[2]
     spe.nm1 <- spe4each[[nm1]]
@@ -361,7 +371,7 @@ fst.comdistnt <- function(comm, phy.dist,
 
     # at least 1 species is needed for each site
     if(length(spe.nm1)>=1 & length(spe.nm2)>=1){
-      tmp.dis <- phy.dist[spe.nm1, spe.nm2, drop=FALSE]
+      tmp.dis <- phy_dist[spe.nm1, spe.nm2, drop=FALSE]
 
       # should conspecific taxa be excluded in different communities
       if (exclude_conspecifics) {
@@ -405,7 +415,7 @@ fst.comdistnt <- function(comm, phy.dist,
   plan("multisession", workers=nworkers)
   if (ses) {
     message("calculating observed mntd\n")
-    mntd.obs <-future_map_dbl(site.pair, ~ fn(.x, phy.dist = phy.dist,
+    mntd.obs <-future_map_dbl(site.pair, ~ fn(.x, phy_dist = phy_dist,
                                               abundance_weighted =abundance_weighted,
                                               exclude_conspecifics = exclude_conspecifics
     ), .progress = T)
@@ -415,7 +425,7 @@ fst.comdistnt <- function(comm, phy.dist,
     message("\ncalculating randomized mntd\n")
 
     rand.commntd <- future_map(site.pair, function(nm.ls) {
-      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy_dist))
       names(shuffled.dist) <- paste0("r", 1:runs)
       # shuffled mntd
       rand.ls <- map_dbl(shuffled.dist, ~ fn(nm.ls, .x,
@@ -441,7 +451,7 @@ fst.comdistnt <- function(comm, phy.dist,
                      rand.commntd.df
     )
   } else {
-    commntd <-future_map_dbl(site.pair, ~ fn(.x, phy.dist = phy.dist,
+    commntd <-future_map_dbl(site.pair, ~ fn(.x, phy_dist = phy_dist,
                                              abundance_weighted =abundance_weighted,
                                              exclude_conspecifics = exclude_conspecifics
     ), .progress = T)
@@ -462,7 +472,7 @@ fst.comdistnt <- function(comm, phy.dist,
 #' A function to calculate MPD or MNTD between native and aliens species
 #'
 #' @param comm a data.frame containing species abundance
-#' @param phy.dist a matrix containing phylogenetic distance
+#' @param phy_dist a matrix containing phylogenetic distance
 #' @param native_sp.ls a vector containing native species
 #' @param invasive_sp.ls a vector containing native species
 #' @param ses if ses.bNTI or bNTI be calculated
@@ -476,7 +486,7 @@ fst.comdistnt <- function(comm, phy.dist,
 #'
 #' @examples
 md2nat <- function(comm,
-                   phy.dist,
+                   phy_dist,
                    native_sp.ls,
                    invasive_sp.ls,
                    ses = F,
@@ -488,7 +498,7 @@ md2nat <- function(comm,
   require(furrr)
 
   # initialize arguments
-  nworkers <- ifelse(is.null(nworkers), future::availableCores()-1, nworkers)
+  nworkers <- ifelse(is.null(nworkers), future::availableCores()/2, nworkers)
   runs <- ifelse(is.null(runs), 999, runs)
 
   # a function for shuffling taxa labels of the dist
@@ -500,9 +510,9 @@ md2nat <- function(comm,
     return(x)
   }
 
-  # new phy.dist which only contains native_sp.ls and invasive_sp.ls
+  # new phy_dist which only contains native_sp.ls and invasive_sp.ls
   all.sp <- c(native_sp.ls, invasive_sp.ls)
-  phy.dist <- phy.dist[all.sp, all.sp]
+  phy_dist <- phy_dist[all.sp, all.sp]
 
   # numbers of site
   n.site <- nrow(comm)
@@ -516,7 +526,7 @@ md2nat <- function(comm,
       mntd.obs <- NA
     } else {
       # for obs.mntd
-      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      obs.dist <- phy_dist[nat_spe, inv_spe, drop=F]
       dist.min <- apply(obs.dist, 2, function(x)x==min(x, na.rm = T))
       mntds <- obs.dist[dist.min]
       ######
@@ -544,7 +554,7 @@ md2nat <- function(comm,
       shuffled.dist <- NA
     } else {
       # for obs.mntd
-      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      obs.dist <- phy_dist[nat_spe, inv_spe, drop=F]
       dist.min <- apply(obs.dist, 2, function(x)x==min(x))
       mntds <- obs.dist[dist.min]
       obs.w.tmp <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
@@ -552,7 +562,7 @@ md2nat <- function(comm,
 
       ###########
       # for rand mntd
-      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy_dist))
       names(shuffled.dist) <- paste0("r", 1:runs)
       shuffled.dist <- map(shuffled.dist, ~ .x[nat_spe, inv_spe, drop=F])
       #randomed mntds
@@ -591,7 +601,7 @@ md2nat <- function(comm,
       mpd.obs <- NA
     } else {
       # for obs.mpd
-      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      obs.dist <- phy_dist[nat_spe, inv_spe, drop=F]
       if (abundance_weighted) {
         obs.w <- t(matrix(nat_abun, nrow = 1)) %*% matrix(inv_abun, nrow=1)
         mpd.obs <- weighted.mean(obs.dist, obs.w)
@@ -615,12 +625,12 @@ md2nat <- function(comm,
       mpd.obs.p <- NA
     } else {
       # for obs.mpd
-      obs.dist <- phy.dist[nat_spe, inv_spe, drop=F]
+      obs.dist <- phy_dist[nat_spe, inv_spe, drop=F]
 
 
       ###########
       # for rand mpd
-      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy.dist))
+      shuffled.dist <- map(1:runs, ~ taxaShuffle(phy_dist))
       names(shuffled.dist) <- paste0("r", 1:runs)
       shuffled.dist <- map(shuffled.dist, ~ .x[nat_spe, inv_spe, drop=F])
 

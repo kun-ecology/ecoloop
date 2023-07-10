@@ -6,28 +6,28 @@
 \usage{
 fst.comdistnt(
   comm,
-  phy.dist,
-  abundance_weighted = FALSE,
+  phy_dist,
   exclude_conspecifics = FALSE,
+  nworkers = NULL,
   ses = F,
-  runs = NULL,
-  nworkers = NULL
+  abundance_weighted = FALSE,
+  runs = NULL
 )
 }
 \arguments{
 \item{comm}{a data.frame containing species abundance}
 
-\item{phy.dist}{a matrix containing phylogenetic distance}
-
-\item{abundance_weighted}{whether bNTI is abundance weighted}
+\item{phy_dist}{a matrix containing phylogenetic distance}
 
 \item{exclude_conspecifics}{Should conspecific taxa in different communities be exclude from MNTD calculations? (default = FALSE)}
 
+\item{nworkers}{numbers of cores used for computation}
+
 \item{ses}{if ses.bNTI or NTI be calculated}
 
-\item{runs}{999 random draws, can be set to to smaller number to reduce computation time}
+\item{abundance_weighted}{whether bNTI is abundance weighted}
 
-\item{nworkers}{numbers of cores used for computation}
+\item{runs}{999 random draws, can be set to to smaller number to reduce computation time}
 }
 \description{
 fast computation of inter-community mean nearest taxon distance (bNTI)
