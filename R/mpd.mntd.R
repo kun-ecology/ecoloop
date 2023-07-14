@@ -51,7 +51,7 @@ fst.ses.mpd <- function(comm,
       }
     }
 
-    data.frame(ntaxa=ntaxa, obs=mpd.obs)
+    data.frame(obs=mpd.obs)
   }
 
   # a function for calculating ses.mpd
@@ -96,7 +96,6 @@ fst.ses.mpd <- function(comm,
 
     #list(rand.mpd.mean, rand.mpd.sd, mpd.obs.z, mpd.obs.rank, mpd.obs.p)
     data.frame(
-      ntaxa = ntaxa,
       obs = mpd.obs,
       rand.mean = rand.mpd.mean,
       rand.sd = rand.mpd.sd,
@@ -138,6 +137,7 @@ fst.ses.mpd <- function(comm,
     res.df <- bind_cols(site = row.names(comm), res.df)
   }
 
+  res.df <- as_tibble(res.df)
   message("\n")
   return(res.df)
 }
@@ -202,7 +202,7 @@ fst.ses.mntd <- function(comm,
       }
     }
 
-    data.frame(ntaxa=ntaxa, obs=mntd.obs)
+    data.frame(obs=mntd.obs)
   }
 
   # a function for calculating ses.mntd
@@ -252,7 +252,6 @@ fst.ses.mntd <- function(comm,
 
     #list(rand.mntd.mean, rand.mntd.sd, mntd.obs.z, mntd.obs.rank, mntd.obs.p)
     data.frame(
-      ntaxa = ntaxa,
       obs = mntd.obs,
       rand.mean = rand.mntd.mean,
       rand.sd = rand.mntd.sd,
@@ -296,6 +295,7 @@ fst.ses.mntd <- function(comm,
     res.df <- bind_cols(site = row.names(comm), res.df)
   }
 
+  res.df <- as_tibble(res.df)
   message("\n")
   return(res.df)
 
@@ -441,24 +441,24 @@ fst.comdistnt <- function(comm,
 
     message("\nmerging data")
     # merge data
-    rand.commntd.df <- data.frame(mntd.obs = mntd.obs,
-                                  rand.mntd.mean = rand.commntd.mean,
-                                  rand.mntd.sd = rand.commntd.sd) %>%
-      mutate(mntd.z = (mntd.obs - rand.commntd.mean) / rand.mntd.sd)
+    rand.commntd.df <- data.frame(obs = mntd.obs,
+                                  rand.mean = rand.commntd.mean,
+                                  rand.sd = rand.commntd.sd) %>%
+      mutate(obs.z = (obs - rand.mean) / rand.sd)
 
     res <- bind_cols(data.frame(site1 = as.character(site.pair[1, ]),
                                 site2 = as.character(site.pair[2, ])),
-                     rand.commntd.df
-    )
+                     rand.commntd.df) %>%
+      as_tibble()
   } else {
     commntd <-future_map_dbl(site.pair, ~ fn(.x, phy_dist = phy_dist,
                                              abundance_weighted =abundance_weighted,
                                              exclude_conspecifics = exclude_conspecifics
     ), .progress = T)
-    res <- data.frame(
+    res <- tibble (
       site1 = as.character(site.pair[1, ,]),
       site2 = as.character(site.pair[2, ]),
-      mntd.obs = commntd)
+      obs = commntd)
 
   }
 
@@ -538,7 +538,7 @@ md2nat <- function(comm,
         mntd.obs <- mean(mntds)
       }
     }
-    data.frame(mntd.obs=mntd.obs)
+    data.frame(obs=mntd.obs)
   }
 
   # a function for calculating ses.mntd
@@ -588,9 +588,9 @@ md2nat <- function(comm,
       mntd.obs.p <- mntd.obs.rank/(runs+1)
     }
 
-    data.frame(mntd.obs=mntd.obs, rand.mntd.mean=rand.mntd.mean,
-               rand.mntd.sd=rand.mntd.sd, mntd.obs.rank=mntd.obs.rank,
-               mntd.obs.z=mntd.obs.z, mntd.obs.p=mntd.obs.p )
+    data.frame(obs=mntd.obs, rand.mean=rand.mntd.mean,
+               rand.sd=rand.mntd.sd, obs.rank=mntd.obs.rank,
+               obs.z=mntd.obs.z, obs.z.p=mntd.obs.p )
     #shuffled.dist
   }
 
@@ -610,7 +610,7 @@ md2nat <- function(comm,
       }
     }
 
-    data.frame(mpd.obs=mpd.obs)
+    data.frame(obs=mpd.obs)
   }
 
   # a function for calculating ses.mpd
@@ -651,9 +651,9 @@ md2nat <- function(comm,
       mpd.obs.p <- mpd.obs.rank/(runs+1)
     }
 
-    data.frame(mpd.obs=mpd.obs, rand.mpd.mean=rand.mpd.mean,
-               rand.mpd.sd=rand.mpd.sd, mpd.obs.rank=mpd.obs.rank,
-               mpd.obs.z=mpd.obs.z, mpd.obs.p=mpd.obs.p )
+    data.frame(obs=mpd.obs, rand.mean=rand.mpd.mean,
+               rand.sd=rand.mpd.sd, obs.rank=mpd.obs.rank,
+               obs.z=mpd.obs.z, obs.z.p=mpd.obs.p )
   }
 
   plan("multisession", workers=nworkers)
@@ -702,8 +702,119 @@ md2nat <- function(comm,
     bind_cols(site=row.names(comm),
               native.ntaxa=map_int(nat_spe.ls, length),
               invasive.ntaxa=map_int(inv_spe.ls, length),.) %>%
-
     as_tibble()
 
-}
+  return(res.df)
 
+}
+####################
+
+
+#' fst.ses.pd a function for calculating PD
+#'
+#' @param comm a matrix contains site * species information, note that it must be a matrix
+#' (will be automatically converted to sparse matrix) or sparse matrix.
+#' @param phy a phylogenetic (or generated from functional distance) tree
+#' @param null_model only implemented for taxaShuffle
+#' @param nworkers numbers of cores for calculating, by default it only 1 core will be used.
+#' @param ses a Boolean value indicates whether standardized form of PD will be calculated
+#' @param runs an integer indicates numbers of randomization, by default 999, can be set to smaller values for tesing.
+#'
+#' @return a tibble contains observed PD and standardized PD (when ses = T)
+#' @export
+#'
+#' @examples
+fst.ses.pd <- function(comm,
+                       phy,
+                       null_model = "taxaShuffle",
+                       nworkers = NULL,
+                       ses = NULL,
+                       runs = NULL) {
+  # check if comm is a sparse Matrix
+  if ( is(comm, "matrix") & !is(comm, "sparseMatrix")) {
+    comm <- as(as.matrix(comm), "sparseMatrix")
+    message("community matrix has been converted to sparseMatrix")
+  } else if (!is(comm, "matrix") & !is(comm, "sparseMatrix") ) {
+    stop("community matrix needs to be a (sparse) matrix!")
+  }
+
+  # check the input
+  if (length(setdiff(colnames(comm), phy$tip.label)) > 0) {
+    stop("There are species labels in community matrix missing in the tree!")
+  }
+
+  if (length(setdiff(phy$tip.label, colnames(comm))) > 0) {
+    phy <- keep.tip(phy, intersect(phy$tip.label, colnames(comm)))
+  }
+  comm <- comm[, intersect(phy$tip.label, colnames(comm))]
+
+  #########################
+  # a function from phyloregion
+  get_pd <-  function (comm, phy) {
+    require(Matrix)
+    require(phangorn)
+    require(ape)
+    el <- numeric(max(phy$edge))
+    el[phy$edge[, 2]] <- phy$edge.length
+    comm <- comm[, phy$tip.label]
+    anc <- Ancestors(phy, seq_along(phy$tip.label))
+    anc <- mapply(c, seq_along(phy$tip.label), anc, SIMPLIFY = FALSE)
+    M <- sparseMatrix(as.integer(rep(seq_along(anc),lengths(anc))),
+                      as.integer(unlist(anc)), x = 1L)
+    commphylo <- comm %*% M
+    commphylo@x[commphylo@x > 1e-08] <- 1
+    list(Matrix = commphylo, edge.length = el)
+    pd <- (commphylo %*% el)[, 1]
+  }
+
+
+  # a function for shuffle phylogenetic tree (only implemented for tipshuffle)
+  tipshuffle <- function(phy) {
+    phy$tip.label <- phy$tip.label[sample(length(phy$tip.label))]
+    return(phy)
+  }
+  #########################
+  # initiate arguments
+  nworkers <- ifelse(is.null(nworkers), 1, nworkers)
+  runs <- ifelse(is.null(runs), 999, runs)
+
+  ######################################
+  # calculate observed PD
+  if (ses) {
+    pd.obs <- get_pd(comm, phy)
+
+    plan("multisession", workers = nworkers)
+    pd.rand <- tibble(rep = paste0("rep", 1:runs)) %>%
+      mutate(phy.rand = future_map(rep, ~ tipshuffle(phy), .progress = T)) %>%
+      mutate(pd = future_map(phy.rand, ~ get_pd(comm, .x), .progress = T) ) %>%
+      select(-phy.rand) %>%
+      pivot_wider(names_from = rep, values_from = pd) %>%
+      unnest(cols = 1:ncol(.))
+
+    pd.rand.mean <- rowMeans(pd.rand, na.rm = T)
+    pd.rand.sd <- apply(pd.rand, 1, function(x) sd(x, na.rm = T))
+    pd.obs.rank <- apply(bind_cols(pd.obs = pd.obs, pd.rand), 1, function(x)rank(x)[1])
+
+    plan("sequential")
+    gc()
+    ###########
+    pd.obs.z <- (pd.obs - pd.rand.mean) / pd.rand.sd
+    pd.obs.p <- pd.obs.rank / (runs + 1)
+
+    res <-
+      tibble(
+        site = row.names(comm),
+        obs = pd.obs,
+        rand.mean = pd.rand.mean,
+        rand.sd = pd.rand.sd,
+        obs.rank = pd.obs.rank,
+        obs.z = pd.obs.z,
+        obs.z.p = pd.obs.p
+      )
+  } else {
+    pd <- get_pd(comm, phy)
+    res <- tibble(site = row.names(comm), obs = pd)
+  }
+
+  return(res)
+}
